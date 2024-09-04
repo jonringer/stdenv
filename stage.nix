@@ -95,6 +95,7 @@ let
       };
     in res // {
       stdenvAdapters = res;
+      inherit config;
     };
 
   trivialBuilders = self: super:
@@ -102,8 +103,7 @@ let
       inherit lib;
       inherit (self) config;
       inherit (self) runtimeShell stdenv stdenvNoCC;
-      inherit (self.pkgsBuildHost) jq shellcheck-minimal;
-      inherit (self.pkgsBuildHost.xorg) lndir;
+      inherit (self.pkgsBuildHost) jq shellcheck-minimal lndir;
     };
 
   stdenvBootstappingAndPlatforms = self: super: let
@@ -138,7 +138,7 @@ let
 
   splice = self: super: import ./splice.nix lib self (adjacentPackages != null);
 
-  stdenvPackages = self: super:
+  stdenvPackages = import ./pkgs
       { inherit lib noSysDirs config overlays; };
 
   aliases = self: super: lib.optionalAttrs config.allowAliases (import ./aliases.nix self super);

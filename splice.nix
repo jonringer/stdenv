@@ -122,12 +122,8 @@ let
     inherit (pkgs.stdenv) buildPlatform targetPlatform hostPlatform;
   };
 
-  splicedPackagesWithXorg = splicedPackages // builtins.removeAttrs splicedPackages.xorg [
-    "callPackage"
-    "newScope"
-    "overrideScope"
-    "packages"
-  ];
+  # TODO: xorg was removed from stdenv bootstrapping
+  splicedPackagesWithXorg = splicedPackages;
 
 in
 

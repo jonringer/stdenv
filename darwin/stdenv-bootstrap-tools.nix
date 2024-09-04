@@ -301,6 +301,6 @@ stdenv.mkDerivation (finalAttrs: {
   };
 
   meta = {
-    maintainers = [ lib.maintainers.copumpkin ];
+    maintainers = [ ];
   };
 })

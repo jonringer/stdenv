@@ -173,13 +173,13 @@ let
         shell = "${bootstrapTools}/bin/bash";
         initialPath = [bootstrapTools];
 
-        fetchurlBoot = import ../../build-support/fetchurl/boot.nix {
+        fetchurlBoot = import ../build-support/fetchurl/boot.nix {
           inherit system;
         };
 
         cc = if prevStage.gcc-unwrapped == null
              then null
-             else (lib.makeOverridable (import ../../build-support/cc-wrapper) {
+             else (lib.makeOverridable (import ../build-support/cc-wrapper) {
           name = "${name}-gcc-wrapper";
           nativeTools = false;
           nativeLibc = false;
@@ -255,7 +255,7 @@ in
         passthru.isFromBootstrapFiles = true;
       };
       gcc-unwrapped = bootstrapTools;
-      binutils = import ../../build-support/bintools-wrapper {
+      binutils = import ../build-support/bintools-wrapper {
         name = "bootstrap-stage0-binutils-wrapper";
         nativeTools = false;
         nativeLibc = false;
@@ -562,7 +562,7 @@ in
       # bootstrap, like guile: https://github.com/NixOS/nixpkgs/issues/181188
       gnumake = super.gnumake.override { inBootstrap = true; };
 
-      gcc = lib.makeOverridable (import ../../build-support/cc-wrapper) {
+      gcc = lib.makeOverridable (import ../build-support/cc-wrapper) {
         nativeTools = false;
         nativeLibc = false;
         isGNU = true;
@@ -636,14 +636,14 @@ in
       # Mainly avoid reference to bootstrap tools
       allowedRequisites = let
         inherit (prevStage) gzip bzip2 xz zlib bash binutils coreutils diffutils findutils
-          gawk gmp gnumake gnused gnutar gnugrep gnupatch patchelf ed file glibc
+          gawk gmp gnumake gnused gnutar gnugrep gnupatch patchelf file glibc
           attr acl libidn2 libunistring linuxHeaders gcc fortify-headers gcc-unwrapped
           ;
       in
         # Simple executable tools
         lib.concatMap (p: [ (lib.getBin p) (lib.getLib p) ]) [
             gzip bzip2 xz bash binutils.bintools coreutils diffutils findutils
-            gawk gmp gnumake gnused gnutar gnugrep gnupatch patchelf ed file
+            gawk gmp gnumake gnused gnutar gnugrep gnupatch patchelf file
           ]
         # Library dependencies
         ++ map lib.getLib (
@@ -673,7 +673,7 @@ in
         ${localSystem.libc} = getLibc prevStage;
 
         # Hack: avoid libidn2.{bin,dev} referencing bootstrap tools.  There's a logical cycle.
-        libidn2 = import ../../development/libraries/libidn2/no-bootstrap-reference.nix {
+        libidn2 = import ../pkgs/libidn2/no-bootstrap-reference.nix {
           inherit lib;
           inherit (prevStage) libidn2;
           inherit (self) stdenv runCommandLocal patchelf libunistring;
@@ -698,5 +698,5 @@ in
     assert isBuiltByNixpkgsCompiler prevStage.coreutils;
     assert isBuiltByNixpkgsCompiler prevStage.gnugrep;
     assert isBuiltByNixpkgsCompiler prevStage.patchelf;
-    { inherit (prevStage) config overlays stdenv; })
+    { inherit (prevStage) stdenv; inherit config overlays; })
 ]

@@ -16,7 +16,7 @@
 , expat
 , libffi
 , libxcrypt
-, mpdecimal ? null
+, mpdecimal
 , ncurses
 , openssl
 , sqlite

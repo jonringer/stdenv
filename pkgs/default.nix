@@ -324,7 +324,7 @@ final: prev: with final; {
 
   libmpc = callPackage ./libmpc { };
 
-  libtool = callPackage ./libtool { };
+  libtool = callPackage ./libtool/libtool2.nix { };
 
   libunistring = callPackage ./libunistring { };
 
@@ -350,6 +350,8 @@ final: prev: with final; {
       tests = tests.makeWrapper;
     };
   } ../build-support/setup-hooks/make-wrapper.sh;
+
+  mpdecimal = callPackage ./mpdecimal { };
 
   mpfr = callPackage ./mpfr { };
 

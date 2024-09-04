@@ -25,7 +25,7 @@
 { stdenv, lib
 , buildPackages
 , fetchurl
-, linuxHeaders ? null
+, linuxHeaders
 , gd ? null, libpng ? null
 , libidn2
 , bison

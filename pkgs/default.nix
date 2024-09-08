@@ -23,6 +23,63 @@ final: prev: with final; {
 
   autoconf-archive = callPackage ./autoconf-archive { };
 
+  # `fetchurl' downloads a file from the network.
+  fetchurl = if stdenv.buildPlatform != stdenv.hostPlatform
+  then buildPackages.fetchurl # No need to do special overrides twice,
+  else lib.makeOverridable (import ../build-support/fetchurl) {
+    inherit lib stdenvNoCC buildPackages;
+    inherit cacert;
+    curl = buildPackages.curlMinimal.override (old: rec {
+      # break dependency cycles
+      fetchurl = stdenv.fetchurlBoot;
+      zlib = buildPackages.zlib.override { fetchurl = stdenv.fetchurlBoot; };
+      pkg-config = buildPackages.pkg-config.override (old: {
+        pkg-config = old.pkg-config.override {
+          fetchurl = stdenv.fetchurlBoot;
+        };
+      });
+      perl = buildPackages.perl.override { inherit zlib; fetchurl = stdenv.fetchurlBoot; };
+      openssl = buildPackages.openssl.override {
+        fetchurl = stdenv.fetchurlBoot;
+        buildPackages = {
+          coreutils = buildPackages.coreutils.override {
+            fetchurl = stdenv.fetchurlBoot;
+            inherit perl;
+            xz = buildPackages.xz.override { fetchurl = stdenv.fetchurlBoot; };
+            gmpSupport = false;
+            aclSupport = false;
+            attrSupport = false;
+          };
+          inherit perl;
+        };
+        inherit perl;
+      };
+      #libssh2 = buildPackages.libssh2.override {
+      #  fetchurl = stdenv.fetchurlBoot;
+      #  inherit zlib openssl;
+      #};
+      # On darwin, libkrb5 needs bootstrap_cmds which would require
+      # converting many packages to fetchurl_boot to avoid evaluation cycles.
+      # So turn gssSupport off there, and on Windows.
+      # On other platforms, keep the previous value.
+      gssSupport =
+        if stdenv.isDarwin || stdenv.hostPlatform.isWindows
+        then false
+        else old.gssSupport or false; # `? false` is the default
+        libkrb5 = buildPackages.libkrb5.override {
+          fetchurl = stdenv.fetchurlBoot;
+          inherit pkg-config perl openssl;
+          keyutils = buildPackages.keyutils.override { fetchurl = stdenv.fetchurlBoot; };
+        };
+        nghttp2 = buildPackages.nghttp2.override {
+          fetchurl = stdenv.fetchurlBoot;
+          inherit pkg-config;
+          enableApp = false; # curl just needs libnghttp2
+          enableTests = false; # avoids bringing `cunit` and `tzdata` into scope
+        };
+      });
+    };
+
   bash = lowPrio (callPackage ./bash/5.nix { });
   # WARNING: this attribute is used by nix-shell so it shouldn't be removed/renamed
   bashInteractive = callPackage ./bash/5.nix {
@@ -102,7 +159,6 @@ final: prev: with final; {
     wrapGas = true;
   };
 
-
   lndir = callPackage ./lndir { };
 
   acl = callPackage ./acl { };
@@ -131,11 +187,15 @@ final: prev: with final; {
 
   bzip2 = callPackage ./bzip2 { };
 
+  cacert = callPackage ./cacert { };
+
   # TODO: Use latest
   cloog = callPackage ./cloog { };
   cloog_0_18_0 = callPackage ./cloog { };
 
   coreutils = callPackage ./coreutils { };
+
+  curlMinimal = callPackage ./curl { };
 
   dieHook = makeSetupHook {
     name = "die-hook";
@@ -333,6 +393,8 @@ final: prev: with final; {
   inherit (callPackages ../os-specific/linux/kernel-headers { inherit (pkgsBuildBuild) elf-header; })
     linuxHeaders makeLinuxHeaders;
 
+  nghttp2 = callPackage ./nghttp2 { };
+
   nix-update-script = lib.error "nix-update-script is not supported yet";
 
   nukeReferences = callPackage ../build-support/nuke-references { };
@@ -357,6 +419,15 @@ final: prev: with final; {
 
   minizip = callPackage ./minizip { };
 
+  # TODO: cleanup
+  inherit (callPackages ./openssl { })
+    openssl_1_1
+    openssl_3
+    openssl_3_2
+    openssl_3_3;
+
+  openssl = openssl_3;
+
   patch = gnupatch;
 
   patchelf = callPackage ./patchelf { };
@@ -364,7 +435,7 @@ final: prev: with final; {
   pcre2 = callPackage ./pcre2 { };
 
   perlInterpreters = callPackage ./perl { };
-  perl = perlInterpreters.perl538;
+  perl = perlInterpreters.perl538.override { enableCrypt = false; };
 
   pkg-config = callPackage ./pkg-config { };
 
@@ -375,6 +446,8 @@ final: prev: with final; {
   python3 = python3Minimal;
 
   readline = callPackage ./readline { };
+
+  removeReferencesTo = callPackage ../build-support/remove-references-to { };
 
   runtimeShell = "${runtimeShellPackage}${runtimeShellPackage.shellPath}";
   runtimeShellPackage = bash;

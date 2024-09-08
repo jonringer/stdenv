@@ -5,6 +5,10 @@ and construction of a package set given additional overlays.
 
 The desire is for this to be the base on which larger nix package sets build upon.
 
+## Changes from upstream Nixpkgs
+
+- `stdenv.isCross` is now defined
+
 ## Status
 
 Stdenv's supported:

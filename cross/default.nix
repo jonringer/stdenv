@@ -3,7 +3,7 @@
 }:
 
 let
-  bootStages = import ../. {
+  bootStages = import ../stdenv.nix {
     inherit lib localSystem overlays;
 
     crossSystem = localSystem;

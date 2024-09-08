@@ -89,7 +89,7 @@ let
 
   stdenvAdapters = self: super:
     let
-      res = import ../stdenv/adapters.nix {
+      res = import ./adapters.nix {
         inherit lib config;
         pkgs = self;
       };

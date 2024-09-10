@@ -1,7 +1,7 @@
 let
   lib = import (builtins.fetchGit {
   url = "https://github.com/jonringer/nix-lib.git";
-  rev = "c19c816e39d14a60dd368d601aa9b389b09d0bbb";
+  rev = "f3baad9fc4df31152e6150712204bb391214fdd7";
 });
 in lib.extend(self: _: {
   systems = import ./systems { lib = self; };

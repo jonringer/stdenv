@@ -374,12 +374,16 @@ final: prev: with final; {
   # For the purpose of the stdenv repo
   python3 = python3Minimal;
 
-  readline = callPackage ./readline { };
+  readline = readline_8_2;
+  readline_7_0 = callPackage ./readline/7.0.nix { };
+  readline_8_2 = callPackage ./readline/8.2.nix { };
 
   runtimeShell = "${runtimeShellPackage}${runtimeShellPackage.shellPath}";
   runtimeShellPackage = bash;
 
-  testers = callPackage ../build-support/testers { };
+  # TODO: stdenv: make this minimal for just stdenv
+  # testers = callPackage ../build-support/testers { };
+  testers = null;
 
   texinfoVersions = callPackage ./texinfo/packages.nix { };
   texinfo = texinfoVersions.texinfo7;

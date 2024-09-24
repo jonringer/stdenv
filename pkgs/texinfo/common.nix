@@ -86,10 +86,10 @@ stdenv.mkDerivation {
       bash
       libintl
     ]
-    ++ optionals stdenv.isSunOS [
-      libiconv
-      gawk
-    ]
+    # ++ optionals stdenv.isSunOS [
+    #   libiconv
+    #   gawk
+    # ]
     ++ optional interactive ncurses;
 
   configureFlags =
@@ -99,12 +99,12 @@ stdenv.mkDerivation {
     # Also prevent the buildPlatform's awk being used in the texindex script
     ++ optionals crossBuildTools [
       "--enable-perl-xs=no"
-      "TI_AWK=${getBin gawk}/bin/awk"
+    #  "TI_AWK=${getBin gawk}/bin/awk"
     ]
     ++ optionals (crossBuildTools && lib.versionAtLeast version "7.1") [
       "texinfo_cv_sys_iconv_converts_euc_cn=yes"
-    ]
-    ++ optional stdenv.isSunOS "AWK=${gawk}/bin/awk";
+    ];
+    #++ optional stdenv.isSunOS "AWK=${gawk}/bin/awk";
 
   installFlags = [ "TEXMF=$(out)/texmf-dist" ];
   installTargets = [

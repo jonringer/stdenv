@@ -1,6 +1,6 @@
 { stdenv
 , fetchurl
-, fetchFromGitHub
+#, fetchFromGitHub
 , buildPackages
 , lib
 , self
@@ -16,7 +16,7 @@
 , passthruFun
 , perlAttr ? "perl${lib.versions.major version}${lib.versions.minor version}"
 , enableThreading ? true, coreutils, makeWrapper
-, enableCrypt ? true, libxcrypt ? null
+, enableCrypt ? false, libxcrypt ? null
 , overrides ? config.perlPackageOverrides or (p: {}) # TODO: (self: super: {}) like in python
 } @ inputs:
 
@@ -243,13 +243,17 @@ stdenv.mkDerivation (rec {
 } // lib.optionalAttrs (stdenv.buildPlatform != stdenv.hostPlatform) rec {
   crossVersion = "84db4c71ae3d3b01fb2966cd15a060a7be334710"; # Nov 29, 2023
 
-  perl-cross-src = fetchFromGitHub {
-    name = "perl-cross-${crossVersion}";
-    owner = "arsv";
-    repo = "perl-cross";
-    rev = crossVersion;
+  perl-cross-src = fetchurl {
+    url = "https://github.com/arsv/perl-cross/archive/${crossVersion}.tar.gz";
     sha256 = "sha256-1Zqw4sy/lD2nah0Z8rAE11tSpq1Ym9nBbatDczR+mxs=";
   };
+  #perl-cross-src = fetchFromGitHub {
+  #  name = "perl-cross-${crossVersion}";
+  #  owner = "arsv";
+  #  repo = "perl-cross";
+  #  rev = crossVersion;
+  #  sha256 = "sha256-1Zqw4sy/lD2nah0Z8rAE11tSpq1Ym9nBbatDczR+mxs=";
+  #};
 
   depsBuildBuild = [ buildPackages.stdenv.cc makeWrapper ];
 

@@ -1,13 +1,15 @@
-{ stdenvNoCC, lib, buildPackages, fetchurl, perl, elf-header
+{ stdenvNoCC, lib, buildPackages, fetchurl, perl
 # only on Android
-, bison
-, flex
+, bison ? null
+, flex ? null
 , rsync ? null
 
 , writeTextFile
 }:
 
 assert stdenvNoCC.hostPlatform.isAndroid -> rsync != null;
+assert stdenvNoCC.hostPlatform.isAndroid -> flex != null;
+assert stdenvNoCC.hostPlatform.isAndroid -> bison != null;
 
 let
 
@@ -51,7 +53,7 @@ let
     depsBuildBuild = [ buildPackages.stdenv.cc ];
     # `elf-header` is null when libc provides `elf.h`.
     nativeBuildInputs = [
-      perl elf-header
+      perl
     ] ++ lib.optionals stdenvNoCC.hostPlatform.isAndroid [
       bison flex rsync
     ] ++ lib.optionals (stdenvNoCC.buildPlatform.isDarwin &&

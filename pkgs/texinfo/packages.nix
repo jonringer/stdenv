@@ -9,7 +9,7 @@
   bash,
   updateAutotoolsGnuConfigScriptsHook,
   gnulib,
-  gawk,
+  gawk ? null,
   xz,
 
   # Not needed for linux bootstrapping

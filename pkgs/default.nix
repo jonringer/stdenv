@@ -36,20 +36,20 @@ final: prev: with final; {
   };
 
   binutils-unwrapped = callPackage ./binutils {
-    autoreconfHook = autoreconfHook269;
     # TODO: darwin support
+    #autoreconfHook = autoreconfHook269;
     # inherit (darwin.apple_sdk.frameworks) CoreServices;
     # FHS sys dirs presumably only have stuff for the build platform
     noSysDirs = (stdenv.targetPlatform != stdenv.hostPlatform) || noSysDirs;
   };
-
-  binutils-unwrapped-all-targets = callPackage ../development/tools/misc/binutils {
-    autoreconfHook = if targetPlatform.isiOS then autoreconfHook269 else autoreconfHook;
-    inherit (darwin.apple_sdk.frameworks) CoreServices;
-    # FHS sys dirs presumably only have stuff for the build platform
-    noSysDirs = (stdenv.targetPlatform != stdenv.hostPlatform) || noSysDirs;
-    withAllTargets = true;
-  };
+#
+#  binutils-unwrapped-all-targets = callPackage ../development/tools/misc/binutils {
+#    autoreconfHook = if targetPlatform.isiOS then autoreconfHook269 else autoreconfHook;
+#    inherit (darwin.apple_sdk.frameworks) CoreServices;
+#    # FHS sys dirs presumably only have stuff for the build platform
+#    noSysDirs = (stdenv.targetPlatform != stdenv.hostPlatform) || noSysDirs;
+#    withAllTargets = true;
+#  };
   binutils = wrapBintoolsWith {
     bintools = binutils-unwrapped;
   };
@@ -103,7 +103,7 @@ final: prev: with final; {
   };
 
 
-  lndir = callPackage ./lndir { };
+#  lndir = callPackage ./lndir { };
 
   acl = callPackage ./acl { };
 
@@ -114,7 +114,7 @@ final: prev: with final; {
   autoconf269 = callPackage ./autoconf/269.nix { };
 
   automake = callPackage ./automake { };
-
+#
   autoreconfHook = callPackage (
     { makeSetupHook, autoconf, automake, gettext, libtool }:
     makeSetupHook {
@@ -143,24 +143,20 @@ final: prev: with final; {
 
   diffutils = callPackage ./diffutils { };
 
-  # Provided by libc on Operating Systems that use the Extensible Linker Format.
-  elf-header = if stdenv.hostPlatform.isElf then null else
-    throw "Non-elf builds are not supported yet in this stdenv repo";
-
   expand-response-params = callPackage ../build-support/expand-response-params { };
 
-  expat = callPackage ./expat { };
-
-  fetchFromGitHub = callPackage ../build-support/fetchgithub { };
-
-  fetchpatch = callPackage ../build-support/fetchpath { };
+#  expat = callPackage ./expat { };
+#
+#  fetchFromGitHub = callPackage ../build-support/fetchgithub { };
+#
+  fetchpatch = callPackage ../build-support/fetchpatch { };
 
   file = callPackage ./file { };
 
   findutils = callPackage ./findutils { };
 
-  flex = callPackage ./flex { };
-
+#  flex = callPackage ./flex { };
+#
   gawk = callPackage ./gawk { };
 
   gnupatch = callPackage ./gnupatch { };
@@ -170,18 +166,18 @@ final: prev: with final; {
 
   gcc_latest = gcc14;
 
-  db = db5;
-  db5 = db53;
-  db53 = callPackage ./db/db-5.3.nix { };
+#  db = db5;
+#  db5 = db53;
+#  db53 = callPackage ./db/db-5.3.nix { };
 
   # TODO: don't use a top-level defined attr to define this
-  default-gcc-version =
+ default-gcc-version =
     if (with stdenv.targetPlatform; isVc4 || libc == "relibc") then 6
     else 13;
   gcc = pkgs.${"gcc${toString default-gcc-version}"};
   gccFun = callPackage ./gcc;
   gcc-unwrapped = gcc.cc;
-
+#
   gccStdenv = if stdenv.cc.isGNU
     then stdenv
     else stdenv.override {
@@ -241,8 +237,6 @@ final: prev: with final; {
   isl_0_20 = callPackage ./isl/0.20.0.nix { };
   isl_0_24 = callPackage ./isl/0.24.0.nix { };
 
-
-
   # We can choose:
   libcCrossChooser = name:
     # libc is hackily often used from the previous stage. This `or`
@@ -273,11 +267,11 @@ final: prev: with final; {
 
   libcCross = assert stdenv.targetPlatform != stdenv.buildPlatform; libcCrossChooser stdenv.targetPlatform.libc;
 
-  libffi = callPackage ./libffi { };
-  libffi_3_3 = callPackage ./libffi/3.3.nix { };
-  libffiBoot = libffi.override {
-    doCheck = false;
-  };
+#  libffi = callPackage ./libffi { };
+#  libffi_3_3 = callPackage ./libffi/3.3.nix { };
+#  libffiBoot = libffi.override {
+#    doCheck = false;
+#  };
 
   libgcc = stdenv.cc.cc.libgcc or null;
 
@@ -328,16 +322,18 @@ final: prev: with final; {
 
   libunistring = callPackage ./libunistring { };
 
+  # Needed by GCC for address sanitizer
   libxcrypt = callPackage ./libxcrypt { };
 
-  inherit (callPackages ../os-specific/linux/kernel-headers { inherit (pkgsBuildBuild) elf-header; })
+  # TODO: stdenv: make cleaner
+  inherit (callPackages ../os-specific/linux/kernel-headers { })
     linuxHeaders makeLinuxHeaders;
 
-  nix-update-script = lib.error "nix-update-script is not supported yet";
+#  nix-update-script = lib.error "nix-update-script is not supported yet";
 
   nukeReferences = callPackage ../build-support/nuke-references { };
 
-    makeWrapper = makeShellWrapper;
+  makeWrapper = makeShellWrapper;
 
   makeShellWrapper = makeSetupHook {
     name = "make-shell-wrapper-hook";
@@ -351,18 +347,19 @@ final: prev: with final; {
     };
   } ../build-support/setup-hooks/make-wrapper.sh;
 
-  mpdecimal = callPackage ./mpdecimal { };
+#  mpdecimal = callPackage ./mpdecimal { };
 
   mpfr = callPackage ./mpfr { };
-
-  minizip = callPackage ./minizip { };
-
+#
+#  minizip = callPackage ./minizip { };
+#
   patch = gnupatch;
 
   patchelf = callPackage ./patchelf { };
 
   pcre2 = callPackage ./pcre2 { };
 
+  # TODO: stdenv expose only one version
   perlInterpreters = callPackage ./perl { };
   perl = perlInterpreters.perl538;
 
@@ -370,21 +367,22 @@ final: prev: with final; {
 
   pythonInterpreters = callPackage ./python { };
   inherit (pythonInterpreters) python3Minimal;
-
-  # For the purpose of the stdenv repo
+#
+#  # For the purpose of the stdenv repo
   python3 = python3Minimal;
-
+#
   readline = readline_8_2;
-  readline_7_0 = callPackage ./readline/7.0.nix { };
+#  readline_7_0 = callPackage ./readline/7.0.nix { };
   readline_8_2 = callPackage ./readline/8.2.nix { };
 
   runtimeShell = "${runtimeShellPackage}${runtimeShellPackage.shellPath}";
   runtimeShellPackage = bash;
 
-  # TODO: stdenv: make this minimal for just stdenv
+   # TODO: stdenv: make this minimal for just stdenv
   # testers = callPackage ../build-support/testers { };
   testers = null;
 
+  # TODO: stdenv: make this minimal for just stdenv
   texinfoVersions = callPackage ./texinfo/packages.nix { };
   texinfo = texinfoVersions.texinfo7;
 
@@ -396,7 +394,7 @@ final: prev: with final; {
       package = targetPackages.windows.mcfgthreads or windows.mcfgthreads;
     };
 
-
+  # Needed by mpfr
   updateAutotoolsGnuConfigScriptsHook = makeSetupHook {
     name = "update-autotools-gnu-config-scripts-hook";
     substitutions = { gnu_config = gnu-config; };

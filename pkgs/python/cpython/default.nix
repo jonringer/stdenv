@@ -13,10 +13,10 @@
 
 # runtime dependencies
 , bzip2 ? null
-, expat
-, libffi
-, libxcrypt
-, mpdecimal
+, expat ? null
+, libffi ? null
+, libxcrypt ? null
+, mpdecimal ? null
 , ncurses
 , openssl
 , sqlite
@@ -121,7 +121,7 @@ let
   ;
 
   # mixes libc and libxcrypt headers and libs and causes segfaults on importing crypt
-  libxcrypt = if stdenv.hostPlatform.isFreeBSD then null else inputs.libxcrypt;
+  libxcrypt = if stdenv.hostPlatform.isFreeBSD then null else (inputs.libxcrypt or null);
 
   buildPackages = pkgsBuildHost;
   inherit (passthru) pythonOnBuildForHost;
@@ -400,8 +400,8 @@ in with passthru; stdenv.mkDerivation (finalAttrs: {
   # https://docs.python.org/3/using/configure.html
   configureFlags = [
     "--without-ensurepip"
-    "--with-system-expat"
-    "--with-system-libmpdec"
+    #"--with-system-expat"
+    #"--with-system-libmpdec"
   ] ++ optionals (openssl != null) [
     "--with-openssl=${openssl.dev}"
   ] ++ optionals tzdataSupport [

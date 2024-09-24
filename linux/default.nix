@@ -508,7 +508,7 @@ in
       inherit (prevStage)
         ccWrapperStdenv
         binutils coreutils gnugrep gettext
-        perl patchelf linuxHeaders gnum4 bison libidn2 libunistring libxcrypt;
+        perl patchelf linuxHeaders gnum4 bison libidn2 libunistring;
         # We build a special copy of libgmp which doesn't use libstdc++, because
         # xgcc++'s libstdc++ references the bootstrap-files (which is what
         # compiles xgcc++).

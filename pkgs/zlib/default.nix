@@ -8,8 +8,8 @@
 # the `.pc` file lists only the main output's lib dir.
 # If false, and if `{ static = true; }`, the .a stays in the main output.
 , splitStaticOutput ? shared && static
-, testers
-, minizip
+, testers ? null
+, minizip ? null
 }:
 
 # Without either the build will actually still succeed because the build

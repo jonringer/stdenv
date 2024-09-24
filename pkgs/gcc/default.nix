@@ -1,4 +1,6 @@
-{ lib, stdenv, targetPackages, fetchurl, fetchpatch, fetchFromGitHub, noSysDirs
+{ lib, stdenv, targetPackages, fetchurl, fetchpatch
+#, fetchFromGitHub
+, noSysDirs
 , langC ? true, langCC ? true, langFortran ? false
 , langAda ? false
 , langObjC ? stdenv.targetPlatform.isDarwin
@@ -15,7 +17,13 @@
 , enableLTO ? stdenv.hostPlatform.hasSharedLibraries
 , texinfo ? null
 , perl ? null # optional, for texi2pod (then pod2man)
-, gmp, mpfr, libmpc, gettext, which, patchelf, binutils
+, gmp
+, mpfr ? null
+, libmpc
+, gettext
+, which
+, patchelf
+, binutils
 , isl ? null # optional, for the Graphite optimization framework.
 , zlib ? null
 , libucontext ? null
@@ -42,7 +50,7 @@
 
 # only for gcc<=6.x
 , langJava ? false
-, flex
+, flex ? null
 , boehmgc ? null
 , zip ? null, unzip ? null, pkg-config ? null
 , gtk2 ? null, libart_lgpl ? null
@@ -261,17 +269,26 @@ pipe ((callFile ./common/builder.nix {}) ({
   pname = "${crossNameAddon}${name}";
   inherit version;
 
-  src = if is6 && stdenv.targetPlatform.isVc4 then fetchFromGitHub {
-    owner = "itszor";
-    repo = "gcc-vc4";
-    rev = "e90ff43f9671c760cf0d1dd62f569a0fb9bf8918";
-    sha256 = "0gxf66hwqk26h8f853sybphqa5ca0cva2kmrw5jsiv6139g0qnp8";
-  } else if is6 && stdenv.targetPlatform.isRedox then fetchFromGitHub {
-    owner = "redox-os";
-    repo = "gcc";
-    rev = "f360ac095028d286fc6dde4d02daed48f59813fa"; # `redox` branch
-    sha256 = "1an96h8l58pppyh3qqv90g8hgcfd9hj7igvh2gigmkxbrx94khfl";
-  } else fetchurl {
+  # src = if is6 && stdenv.targetPlatform.isVc4 then fetchFromGitHub {
+  #   owner = "itszor";
+  #   repo = "gcc-vc4";
+  #   rev = "e90ff43f9671c760cf0d1dd62f569a0fb9bf8918";
+  #   sha256 = "0gxf66hwqk26h8f853sybphqa5ca0cva2kmrw5jsiv6139g0qnp8";
+  # } else if is6 && stdenv.targetPlatform.isRedox then fetchFromGitHub {
+  #   owner = "redox-os";
+  #   repo = "gcc";
+  #   rev = "f360ac095028d286fc6dde4d02daed48f59813fa"; # `redox` branch
+  #   sha256 = "1an96h8l58pppyh3qqv90g8hgcfd9hj7igvh2gigmkxbrx94khfl";
+  # } else fetchurl {
+  #   url = if atLeast7
+  #         then "mirror://gcc/releases/gcc-${version}/gcc-${version}.tar.xz"
+  #         else if atLeast6
+  #         then "mirror://gnu/gcc/gcc-${version}/gcc-${version}.tar.xz"
+  #         else "mirror://gnu/gcc/gcc-${version}/gcc-${version}.tar.bz2";
+  #   ${if is10 || is11 || is13 then "hash" else "sha256"} =
+  #     gccVersions.srcHashForVersion version;
+  # };
+  src = fetchurl {
     url = if atLeast7
           then "mirror://gcc/releases/gcc-${version}/gcc-${version}.tar.xz"
           else if atLeast6

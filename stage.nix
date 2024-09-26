@@ -331,21 +331,32 @@ let
     };
   };
 
+  stdenvPackages' = let
+    toFix = lib.foldl' (lib.flip lib.extends) (self: {}) ([
+      stdenvBootstappingAndPlatforms
+      stdenvPackages
+      stdenvOverrides
+    ]);
+  in
+    lib.fix toFix;
+
   # The complete chain of package set builders, applied from top to bottom.
   # stdenvOverlays must be last as it brings package forward from the
   # previous bootstrapping phases which have already been overlayed.
   toFix = lib.foldl' (lib.flip lib.extends) (self: {}) ([
-    stdenvBootstappingAndPlatforms
-    stdenvAdapters
-    trivialBuilders
-    splice
-    stdenvPackages
-    otherPackageSets
-    aliases
-    configOverrides
+    (final: prev: { inherit (stdenvPackages') stdenv; __stdenvPackages = stdenvPackages; })
+      stdenvAdapters
+      trivialBuilders
+      splice
+      stdenvPackages
+      otherPackageSets
+      aliases
+      configOverrides
   ] ++ overlays ++ [
-    stdenvOverrides ]);
+    stdenvOverrides
+  ]);
 
 in
   # Return the complete set of packages.
-  lib.fix toFix
+  # lib.fix toFix
+   stdenvPackages'

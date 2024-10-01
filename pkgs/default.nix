@@ -155,7 +155,7 @@ final: prev: with final; {
 
   fetchFromGitHub = callPackage ../build-support/fetchgithub { };
 
-  fetchpatch = callPackage ../build-support/fetchpath { };
+  fetchpatch = callPackage ../build-support/fetchpatch { };
 
   file = callPackage ./file { };
 

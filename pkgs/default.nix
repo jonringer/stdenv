@@ -8,6 +8,8 @@ final: prev: with final; {
 
   pkgs = final;
 
+  mkReleaseLib = import ./release/lib.nix;
+
   stdenvNoCC = stdenv.override (
     { cc = null; hasCC = false; }
 

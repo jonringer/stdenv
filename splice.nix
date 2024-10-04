@@ -122,9 +122,6 @@ let
     inherit (pkgs.stdenv) buildPlatform targetPlatform hostPlatform;
   };
 
-  # TODO: xorg was removed from stdenv bootstrapping
-  splicedPackagesWithXorg = splicedPackages;
-
 in
 
 {
@@ -135,9 +132,9 @@ in
   # `newScope' for sets of packages in `pkgs' (see e.g. `gnome' below).
   callPackage = pkgs.newScope { };
 
-  callPackages = lib.callPackagesWith splicedPackagesWithXorg;
+  callPackages = lib.callPackagesWith splicedPackages;
 
-  newScope = extra: lib.callPackageWith (splicedPackagesWithXorg // extra);
+  newScope = extra: lib.callPackageWith (splicedPackages // extra);
 
   # prefill 2 fields of the function for convenience
   makeScopeWithSplicing = lib.makeScopeWithSplicing splicePackages pkgs.newScope;

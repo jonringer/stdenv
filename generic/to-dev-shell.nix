@@ -43,6 +43,9 @@ in originalArgs // {
   propagatedBuildInputs = mergeInputs "propagatedBuildInputs";
   propagatedNativeBuildInputs = mergeInputs "propagatedNativeBuildInputs";
 
+  # Avoid dependency on the original src, which likely will be a duplicate
+  src = null;
+
   shellHook = lib.concatStringsSep "\n" (lib.catAttrs "shellHook"
     (lib.reverseList inputsFrom ++ [ attrs ]));
 

@@ -27,7 +27,6 @@
 , threadsCross ? null # for MinGW
 , withoutTargetLibc ? false
 , gnused ? null
-, cloog # unused; just for compat with gcc4, as we override the parameter on some places
 , buildPackages
 , pkgsBuildTarget
 , libxcrypt
@@ -133,7 +132,6 @@ let
         binutils
         buildPackages
         cargo
-        cloog
         withoutTargetLibc
         darwin
         disableBootstrap
@@ -224,9 +222,6 @@ let
     });
 
 in
-
-# We enable the isl cloog backend.
-assert !atLeast6 -> (cloog != null -> isl != null);
 
 assert langJava -> !atLeast7 && zip != null && unzip != null && zlib != null && boehmgc != null && perl != null;  # for `--enable-java-home'
 

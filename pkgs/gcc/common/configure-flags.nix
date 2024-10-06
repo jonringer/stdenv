@@ -6,7 +6,6 @@
 , version
 
 , binutils, gmp, mpfr, libmpc, isl
-, cloog ? null
 
 , enableLTO
 , enableMultilib
@@ -197,11 +196,6 @@ let
 
     # Optional features
     ++ lib.optional (isl != null) "--with-isl=${isl}"
-    ++ lib.optionals (lib.versionOlder version "5" && cloog != null) [
-      "--with-cloog=${cloog}"
-      "--disable-cloog-version-check"
-      "--enable-cloog-backend=isl"
-    ]
 
     # Ada options, gcc can't build the runtime library for a cross compiler
     ++ lib.optional langAda

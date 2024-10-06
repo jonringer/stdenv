@@ -133,10 +133,6 @@ final: prev: with final; {
 
   bzip2 = callPackage ./bzip2 { };
 
-  # TODO: Use latest
-  cloog = callPackage ./cloog { };
-  cloog_0_18_0 = callPackage ./cloog { };
-
   coreutils = callPackage ./coreutils { };
 
   dieHook = makeSetupHook {

@@ -14,7 +14,6 @@
 , libmpc
 , libucontext ? null
 , libxcrypt ? null
-, cloog ? null
 , darwin ? null
 , isl ? null
 , zlib ? null
@@ -83,7 +82,6 @@ in
   ++ [
     targetPackages.stdenv.cc.bintools # For linking code at run-time
   ]
-  ++ optionals (lib.versionOlder version "5" && cloog != null) [ cloog ]
   ++ optionals (isl != null) [ isl ]
   ++ optionals (zlib != null) [ zlib ]
   ++ optionals langJava [ boehmgc zip unzip ]

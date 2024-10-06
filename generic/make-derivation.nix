@@ -635,6 +635,12 @@ extendDerivation
        disallowedRequisites = [ ];
      });
 
+     toDevShell = let
+       originalArgs = deleteFixedOutputRelatedAttrs derivationArg;
+       toShell = import ./to-dev-shell.nix lib originalArgs;
+       shellFunc = f: if builtins.isFunction f then f stdenv else f;
+     in f: derivation (toShell (shellFunc f));
+
      inherit passthru overrideAttrs;
      inherit meta;
    } //

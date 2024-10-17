@@ -27,6 +27,9 @@
 , # Allow a configuration attribute set to be passed in as an argument.
   config ? {}
 
+, # Allow for users to pass modules for the evaluation of pkgs.config
+  modules ? []
+
 , # List of overlays layers used to extend Nixpkgs.
   overlays ? []
 
@@ -93,7 +96,7 @@ in let
         _file = "nixpkgs.config";
         config = config1;
       })
-    ];
+    ] ++ modules;
     class = "nixpkgsConfig";
   };
 
